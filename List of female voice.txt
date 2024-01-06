@@ -1,0 +1,31 @@
+ShortName:af-ZA
+ShortName: sq-AL-AnilaNeural
+ShortName: am-ET-MekdesNeural
+ShortName: ar-DZ-AminaNeural
+ShortName: ar-BH-LailaNeural
+ShortName: ar-EG-SalmaNeural
+ShortName: ar-IQ-RanaNeural
+ShortName: ar-JO-SanaNeural
+ShortName: ar-KW-NouraNeural
+ShortName: ar-LB-LaylaNeural
+ShortName: ar-LY-ImanNeural
+ShortName: ar-MA-MounaNeural
+ShortName: ar-OM-AyshaNeural
+ShortName: ar-QA-AmalNeural
+ShortName: ar-SA-ZariyahNeural
+ShortName: ar-SY-AmanyNeural
+ShortName: ar-TN-ReemNeural
+ShortName: ar-AE-FatimaNeural
+ShortName: ar-YE-MaryamNeural
+ShortName: az-AZ-BanuNeural
+ShortName: bn-BD-NabanitaNeural
+ShortName: bn-IN-TanishaaNeural
+ShortName: bn-IN-TanishaaNeural
+ShortName: bg-BG-KalinaNeural
+ShortName: my-MM-NilarNeural
+ShortName: ca-ES-JoanaNeural
+ShortName: zh-HK-HiuGaaiNeural
+ShortName: zh-HK-HiuMaanNeural
+ShortName: zh-CN-XiaoxiaoNeural
+ShortName: zh-CN-XiaoyiNeural
+ShortName: zh-TW-HsiaoChenNeural  /*Current Voice*/
