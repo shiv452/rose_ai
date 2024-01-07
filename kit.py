@@ -74,4 +74,45 @@ hour = current_time.hour
 
 # Greet the user based on the time of
 
+#######back up code
+def command_from_user():
+    # Create a Recognizer instance
+    rec = srp.Recognizer()
 
+    # Use a microphone as the audio source
+    with srp.Microphone() as source:
+        # Notify the user that the AI is listening
+        speak("I'm listening. Please speak.")
+
+        # Set the pause threshold for audio input
+        rec.pause_threshold = 1
+
+        #capture audio from the microphone
+        audio = rec.listen(source)
+
+    try:
+        print("Recognizing the voice!")
+
+        # Use Google Speech Recognition to convert audio to text
+        query = rec.recognize_google(audio, language='en-us')
+        return query
+
+    except srp.UnknownValueError:
+        # Handle the case where speech recognition could not understand the audio
+        print("Sorry, I couldn't understand the audio.")
+        return ""
+
+    except srp.RequestError as e:
+        # Handle the case where there is an error with the Google Speech Recognition service
+        print(f"Error with the Google Speech Recognition service: {e}")
+        return ""
+
+    except Exception as e:
+        # Handle any other unexpected errors
+        print(e)
+        return " "
+
+    # Return the recognized query
+    return query
+
+########################################

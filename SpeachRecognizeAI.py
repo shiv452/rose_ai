@@ -1,13 +1,18 @@
 # Importing necessary libraries
 import os
+import platform
 import pygame
 import speech_recognition as srp
 import pyautogui
 import pywhatkit
-import datetime
+from datetime import datetime
 
 
-
+#########################
+'''
+Below code is used to enable the AI voice
+'''
+#########################
 def speak(text):
     # Select a voice
     voice = "zh-TW-HsiaoChenNeural" 
@@ -37,27 +42,40 @@ def speak(text):
         # Print any exceptions that occur
         print(e)
     
-    # ##Temporary comment     command + /
+    ##Temporary comment     command + /
     # finally:
     #     # Stop and quit the pygame.mixer
     #     pygame.mixer.music.stop()
     #     pygame.mixer.music.quit()
+    
+    #####################################################
+    '''
+    Below line of code is used to Enable the Microphone and Voice Recognize in real time scenario
+    '''
+    #####################################################
 def command_from_user():
     # Create a Recognizer instance
     rec = srp.Recognizer()
 
     # Use a microphone as the audio source
     with srp.Microphone() as source:
-        print("Listening to your voice....!")
+        # Notify the user that the AI is listening
+        speak("I'm listening. Please speak.")
 
         # Set the pause threshold for audio input
         rec.pause_threshold = 1
 
-        # Capture audio from the microphone
-        audio = rec.listen(source)
+        try:
+            # Capture audio from the microphone
+            audio = rec.listen(source)
+        except srp.WaitTimeoutError:
+            # Handle the case where there's a timeout (no speech detected)
+            speak("Sorry, I didn't hear anything. Please try again.")
+            return ""
 
     try:
-        print("Recognizing the voice.....!")
+        # Notify the user that the AI is recognizing the voice
+        print("Recognizing the voice.")
 
         # Use Google Speech Recognition to convert audio to text
         query = rec.recognize_google(audio, language='en-us')
@@ -65,7 +83,7 @@ def command_from_user():
 
     except srp.UnknownValueError:
         # Handle the case where speech recognition could not understand the audio
-        print("Sorry, I couldn't understand the audio.")
+        speak("Sorry, I couldn't understand what you said. Please try again.")
         return ""
 
     except srp.RequestError as e:
@@ -75,42 +93,81 @@ def command_from_user():
 
     except Exception as e:
         # Handle any other unexpected errors
-        print(e)
-        return " "
+        print(f"An unexpected error occurred: {e}")
+        return ""
 
     # Return the recognized query
-    return query
+    return ""#query
 
-# Get the current time
-current_time = datetime.datetime.now()
-hour = current_time.hour
+'''
+Below code is used to switch the tab and close the tab based on the user system
+'''
+#######################################
+'''
+"Darwin" in this context refers to the Darwin operating system kernel, which is the open-source Unix-like operating system core that underlies macOS. Apple's macOS is built on top of the Darwin operating system.
+'''
 
-# Greet the user based on the time of day
-if 3 <= hour < 12:
-    speak("Good morning, sir!")
-elif 12 <= hour < 18:
-    speak("Good afternoon, sir!")
-else:
-    speak("Good evening, sir!")
+########################
+'''
+Defining the all while loop function here
+'''
+##########################
+def switch_tab():
+    system_platform = platform.system()
 
+    if system_platform == 'Darwin':  # macOS
+        pyautogui.hotkey('command', 'tab')
+    elif system_platform == 'Windows':
+        pyautogui.hotkey('alt', 'tab')
+    else:
+        speak("Unsupported operating system.")
+
+def close_tab():
+    system_platform = platform.system()
+
+    if system_platform == 'Darwin':  # macOS
+        pyautogui.hotkey('command', 'w')
+    elif system_platform == 'Windows':
+        pyautogui.hotkey('alt', 'w')
+    else:
+        speak("Unsupported operating system.")
+
+# Function to greet the user based on the time of day        
+def greet_user():
+    # Get the current time
+    current_time = datetime.now()
+    hour = current_time.hour
+
+    # Greet the user based on the time of day
+    if 3 <= hour < 12:
+        speak("Good morning, sir!")
+    elif 12 <= hour < 18:
+        speak("Good afternoon, sir!")
+    elif 18 <= hour < 24:
+        speak("Good evening, sir!")
+    else:
+        speak("Good night, sir!")
 # Greet the user
+greet_user()
+
+#######################END#################################
+# Introduce the AI
 speak("I'm Your Personal AI, My name is Rose")
-speak("Hey Boss! How can I help you today?")
-
-# Capture user input through voice command
-query = command_from_user()
-print(query)
+speak("Hello Boss! How can I assist you today....?")
 
 
-###################################
+##################################
+# Initialize app_name outside the loop
+app_name = ""
 
+# While loop for user interactions
 while True:
     query = command_from_user().lower()
     print('\nYou said: ' + query)
 
     if 'open' in query:
         app_name = query.replace('open', '')
-        speak('Opening ' + app_name)
+        speak('opening ' + app_name)
         pyautogui.hotkey('command', 'space')
         pyautogui.typewrite(app_name)
         pyautogui.sleep(0.5)
@@ -120,21 +177,55 @@ while True:
         pyautogui.hotkey('command','q')
         speak(app_name + ' is closed, sir')
 
+# Check if the query contains the word 'Play'
     elif 'play' in query:
         song_name = query.replace('play', '')
-        speak('As you command, sir. Playing ' + song_name + ' for you....!')
+        speak('As your command, sir. Playing ' + song_name + ' for you.')
         pywhatkit.playonyt(song_name)
 
-    elif 'stop' in query or 'exit' in query or 'quit' in query:
+# Check if the query contains the word 'time'
+    elif 'time' in query:
+        current_time = datetime.now().strftime('%I:%M %p')#Get the current time and format it as hh:mm AM/PM
+        '''
+%H: Represents the hour in 24-hour format (00 to 23).
+%I: Represents the hour in 12-hour format (01 to 12).
+%M: Represents the minute (00 to 59).
+%p: Represents either AM or PM, depending on the time.
+        '''
+        speak('current time is '+ current_time)
+        
+# Check if the query contains the word 'shift tab'
+    elif 'shift_tab' in query:
+        #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
+        #pyautogui.hotkey('alt','tab') #this line is for Win user
+        switch_tab()
+        speak(switch_tab+ 'Tab is switch sir')
+        
+    elif 'close_tab' in query:
+        #pyautogui.hotkey('command','w') #this line is to close the tab fro mac
+        #pyautogui.hotkey('alt','w') #this line is for win user
+        close_tab()
+        speak(close_tab +' Tab is closed sir')
+
+#Stop and exit from the current window
+    elif any(keyword in query for keyword in ['stop', 'exit', 'quit']): 
         speak('Goodbye, sir!')
         break
+        
+    elif 'search' in query:
+        search_query = query.replace('search', '')
+        speak(f"Searching the web for {search_query}")
+        pywhatkit.search(search_query)
 
     else:
-        speak("I'm not sure how to handle that, sir.")
+        speak("I'm not sure how to handle that, sir")
+else:
+    speak("Sorry, I didn't hear a valid command. Please try again.")
 
+'''
+Below step is used to stop the infinite while loop for stop
+'''
 # Cleanup code if needed
 # Stop and quit the pygame.mixer
 pygame.mixer.music.stop()
-pygame.mixer.music.quit()
-
-
+pygame.mixer.quit() 
