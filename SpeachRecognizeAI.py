@@ -6,6 +6,8 @@ import speech_recognition as srp
 import pyautogui
 import pywhatkit
 from datetime import datetime
+import time
+
 
 
 #########################
@@ -14,8 +16,12 @@ Below code is used to enable the AI voice
 '''
 #########################
 def speak(text):
+
     # Select a voice
-    voice = "zh-TW-HsiaoChenNeural" 
+    ''' Best Voice to use US female voice
+    en-US-AriaNeural, en-US-AnaNeural, en-US-JennyNeural, en-US-MichelleNeural, 
+    '''
+    voice = "en-US-AnaNeural"  #"zh-TW-HsiaoChenNeural"   #"chaina voice 
 
     # Build the command for the edge-tts tool
     command = f'edge-tts --voice "{voice}" --text "{text}" --write-media "audio/output.mp3"'
@@ -111,27 +117,9 @@ Below code is used to switch the tab and close the tab based on the user system
 '''
 Defining the all while loop function here
 '''
-##########################
-def switch_tab():
-    system_platform = platform.system()
+# ##########################
 
-    if system_platform == 'Darwin':  # macOS
-        pyautogui.hotkey('command', 'tab')
-    elif system_platform == 'Windows':
-        pyautogui.hotkey('alt', 'tab')
-    else:
-        speak("Unsupported operating system.")
-
-def close_tab():
-    system_platform = platform.system()
-
-    if system_platform == 'Darwin':  # macOS
-        pyautogui.hotkey('command', 'w')
-    elif system_platform == 'Windows':
-        pyautogui.hotkey('alt', 'w')
-    else:
-        speak("Unsupported operating system.")
-
+# ########################################################
 # Function to greet the user based on the time of day        
 def greet_user():
     # Get the current time
@@ -150,6 +138,7 @@ def greet_user():
 # Greet the user
 greet_user()
 
+
 #######################END#################################
 # Introduce the AI
 speak("I'm Your Personal AI, My name is Rose")
@@ -159,6 +148,8 @@ speak("Hello Boss! How can I assist you today....?")
 ##################################
 # Initialize app_name outside the loop
 app_name = ""
+# Initialize sleep mode state
+sleep_mode = False
 
 # While loop for user interactions
 while True:
@@ -173,8 +164,34 @@ while True:
         pyautogui.sleep(0.5)
         pyautogui.press('enter')
 
+# Check if the query contains the word 'switch tab'
+    elif 'switch right' in query:
+        #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
+        #pyautogui.hotkey('alt','tab') #this line is for Win user
+        #switchTab()
+        pyautogui.hotkey('Ctrl','tab')
+        time.sleep(2)
+        speak('tab is switch sir')
+        
+    elif 'switch left' in query:
+        #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
+        #pyautogui.hotkey('alt','tab') #this line is for Win user
+        #switchTab()
+        pyautogui.hotkey('Ctrl','shift','tab')
+        time.sleep(2)
+        speak('tab is switch sir')
+        
+    elif 'close tab' in query:
+        #pyautogui.hotkey('command','w') #this line is to close the tab fro mac
+        #pyautogui.hotkey('alt','w') #this line is for win user
+        #closeTab()
+        pyautogui.hotkey('command','w')
+        time.sleep(2)
+        speak('tab is closed sir')
+        
     elif 'close' in query:
         pyautogui.hotkey('command','q')
+        time.sleep(4)
         speak(app_name + ' is closed, sir')
 
 # Check if the query contains the word 'Play'
@@ -194,19 +211,6 @@ while True:
         '''
         speak('current time is '+ current_time)
         
-# Check if the query contains the word 'shift tab'
-    elif 'shift_tab' in query:
-        #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
-        #pyautogui.hotkey('alt','tab') #this line is for Win user
-        switch_tab()
-        speak(switch_tab+ 'Tab is switch sir')
-        
-    elif 'close_tab' in query:
-        #pyautogui.hotkey('command','w') #this line is to close the tab fro mac
-        #pyautogui.hotkey('alt','w') #this line is for win user
-        close_tab()
-        speak(close_tab +' Tab is closed sir')
-
 #Stop and exit from the current window
     elif any(keyword in query for keyword in ['stop', 'exit', 'quit']): 
         speak('Goodbye, sir!')
@@ -217,10 +221,15 @@ while True:
         speak(f"Searching the web for {search_query}")
         pywhatkit.search(search_query)
 
+    elif 'sleep' in query:
+        speak('As your command sir,' +'I''m going to sleep but you can call me anytime just you have to say wake up and I will be there for you')
+        sleep_mode = True
+        
+    elif 'wake up' in query:
+        speak('I am awake sir. How can i serve you sir!')
+
     else:
         speak("I'm not sure how to handle that, sir")
-else:
-    speak("Sorry, I didn't hear a valid command. Please try again.")
 
 '''
 Below step is used to stop the infinite while loop for stop
@@ -228,4 +237,4 @@ Below step is used to stop the infinite while loop for stop
 # Cleanup code if needed
 # Stop and quit the pygame.mixer
 pygame.mixer.music.stop()
-pygame.mixer.quit() 
+pygame.mixer.quit()   
