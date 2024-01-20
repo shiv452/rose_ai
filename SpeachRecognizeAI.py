@@ -7,7 +7,7 @@ import pyautogui
 import pywhatkit
 from datetime import datetime
 import time
-
+import Youtube_skip
 
 #########################
 '''
@@ -66,7 +66,7 @@ def command_from_user():
         try:
             audio = rec.listen(source)
             print("Analyzing the voice...!")
-            query = rec.recognize_google(audio, language='en-us')
+            query_general_general = rec.recognize_google(audio, language='en-us')
 
         except srp.UnknownValueError:
             # Handle the case where speech recognition could not understand the audio
@@ -83,8 +83,8 @@ def command_from_user():
             print(f"An unexpected error occurred: {e}")
             return ""
 
-    # Return the recognized query
-    return query
+    # Return the recognized query_general
+    return query_general_general
 #######################################
 '''
 "Darwin" in this context refers to the Darwin operating system kernel, which is the open-source Unix-like operating system core that underlies macOS. Apple's macOS is built on top of the Darwin operating system.
@@ -121,20 +121,29 @@ app_name = ""
 # sleep_mode = False
 
 # While loop for user interactions
+# While loop for user interactions
 while True:
-    query = command_from_user().lower()
-    print('\n You said: ' + query)
+    # Get general user input
+    query_general = command_from_user().lower()
 
-    if 'open' in query:
-        app_name = query.replace('open', '')
+    # Get YouTube-specific user input
+    query_youtube_skip = Youtube_skip.command_from_user()
+
+    # Print the recognized queries for debugging
+    print('\nYou said (General):', query_general)
+    print('You said (YouTube skip):', query_youtube_skip)
+
+    if 'open' in query_general:
+        app_name = query_general.replace('open', '')
         speak('opening ' + app_name)
-        pyautogui.hotkey('command', 'space')
+        with pyautogui.hold('command'):
+            pyautogui.press('space')
         pyautogui.typewrite(app_name)
         pyautogui.sleep(0.2)
         pyautogui.press('enter')
 
-# Check if the query contains the word 'switch tab'
-    elif 'switch right' in query:
+# Check if the query_general contains the word 'switch tab'
+    elif 'switch right' in query_general:
         #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
         #pyautogui.hotkey('alt','tab') #this line is for Win user
         #switchTab()
@@ -142,7 +151,7 @@ while True:
         time.sleep(2)
         speak('tab is switch sir')
         
-    elif 'switch left' in query:
+    elif 'switch left' in query_general:
         #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
         #pyautogui.hotkey('alt','tab') #this line is for Win user
         #switchTab()
@@ -150,27 +159,35 @@ while True:
         time.sleep(2)
         speak('tab is switch sir')
         
-    elif 'close tab' in query:
+    elif 'close tab' in query_general:
         #pyautogui.hotkey('command','w') #this line is to close the tab fro mac
         #pyautogui.hotkey('alt','w') #this line is for win user
         #closeTab()
-        pyautogui.hotkey('command','w')
-        time.sleep(2)
+        with pyautogui.hold('command'):
+            pyautogui.press('w')
+        time.sleep(0.5)
         speak('tab is closed sir')
         
-    elif 'close' in query:
+    elif 'close' in query_general:
         pyautogui.hotkey('command','q')
         time.sleep(4)
         speak(app_name + ' is closed, sir')
-
-# Check if the query contains the word 'Play'
-    elif 'play' in query:
-        song_name = query.replace('play', '')
-        speak('As your command, sir. Playing ' + song_name + ' for you.')
-        pywhatkit.playonyt(song_name)
-
-# Check if the query contains the word 'time'
-    elif 'time' in query:
+        
+# Check if the query_general contains the word 'Play' and play the song
+    elif 'play' in query_general:
+        song_name = query_general.replace('play', '')
+        Youtube_skip.play_youtube_video(song_name)
+        # try:
+        #     speak('As your command, sir. Playing ' + song_name + ' for you.')
+        #     pywhatkit.playonyt(song_name)
+        # except Exception as e:
+        #     speak("Sorry, there was an issue playing the requested song.")
+            
+        # speak('As your command, sir. Playing ' + song_name + ' for you.')
+        # pywhatkit.playonyt(song_name)
+        
+# Check if the query_general contains the word 'time'
+    elif 'time' in query_general:
         current_time = datetime.now().strftime('%I:%M %p')#Get the current time and format it as hh:mm AM/PM
         '''
 %H: Represents the hour in 24-hour format (00 to 23).
@@ -180,20 +197,25 @@ while True:
         '''
         speak('current time is '+ current_time)
         
-#Stop and exit from the current window
-    elif any(keyword in query for keyword in ['stop', 'exit', 'quit']): 
-        speak('have a great day master')
-        break
-        
-    elif 'search' in query:
-        search_query = query.replace('search', '')
-        speak(f"Searching the web for {search_query}")
-        pywhatkit.search(search_query)
+    elif 'search' in query_general:
+        search_query_general = query_general.replace('search', '')
+        try:
+            speak(f"Searching the web for {search_query_general}")
+            pywhatkit.search(search_query_general)
+        except Exception as e:
+                speak("Sorry, there was an issue with the search.")
+        # speak(f"Searching the web for {search_query_general}")
+        # pywhatkit.search(search_query_general)
 
-    # elif 'sleep' in query:
+    # elif 'sleep' in query_general:
     #     speak('As your command sir,' +'I''m going to sleep but you can call me anytime just you have to say wake up and I will be there for you')
     #     sleep_mode = True
-
+    # Stop and exit from the current window
+    elif any(keyword in query_general for keyword in ['stop', 'exit', 'quit']):
+        speak('Thank you for using rose ai, have a great day, sir!')
+        speak('If you need assistance in the future, feel free to call upon me. Goodbye!')
+        break
+    
     else:
         speak("I'm not sure how to handle that, sir")
 

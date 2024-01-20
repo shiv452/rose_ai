@@ -9,7 +9,7 @@ while True:
         speak('its great to head that sir.')
     elif 'who is you creator' in query:
         speak('i am created by my master name Shivam')
-    elif 'what command you perfom' in query:
-        speak('i am still improving phase but i can perform little task for you.')
+    elif 'what is your name' in query:
+        speak('My Name is rose')
     else:
         speak('Pardon me sir but I did not understand what you said.')
