@@ -61,7 +61,7 @@ def command_from_user():
 
     with srp.Microphone() as source:
         speak("I'm listening. Please speak.")
-        rec.pause_threshold = 1
+        rec.pause_threshold = 0.5
 
         try:
             audio = rec.listen(source)
