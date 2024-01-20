@@ -1,3 +1,4 @@
+"en-US-AriaNeural" --> Latest voice of Rose
 ShortName:af-ZA
 ShortName: sq-AL-AnilaNeural
 ShortName: am-ET-MekdesNeural
