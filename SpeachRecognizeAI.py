@@ -16,11 +16,7 @@ Below code is used to enable the AI voice
 #########################
 def speak(text):
 
-    # Select a voice
-    ''' Best Voice to use US female voice
-    en-US-AriaNeural, en-US-AnaNeural, en-US-JennyNeural, en-US-MichelleNeural, 
-    "en-US-AnaNeural"  #"zh-TW-HsiaoChenNeural"   #"chaina voice 
-    '''
+    # Rose voice
     voice = "en-US-AriaNeural"
 
     # Build the command for the edge-tts tool
@@ -65,20 +61,35 @@ def command_from_user():
 
     with srp.Microphone() as source:
         speak("I'm listening. Please speak.")
-        rec.pause_threshold = 0.5
-        audio = rec.listen(source)
+        rec.pause_threshold = 1
 
         try:
+            audio = rec.listen(source)
             print("Analyzing the voice...!")
-            query = rec.recognize_google_cloud(audio, language='en-us')
+            query = rec.recognize_google(audio, language='en-us')
+
+        except srp.UnknownValueError:
+            # Handle the case where speech recognition could not understand the audio
+            speak("Sorry, I couldn't understand what you said. Please try again.")
+            return ""
+
+        except srp.RequestError as e:
+            # Handle the case where there is an error with the Google Speech Recognition service
+            print(f"Error with the Google Speech Recognition service: {e}")
+            return ""
 
         except Exception as e:
-            print(e)
+            # Handle any other unexpected errors
+            print(f"An unexpected error occurred: {e}")
             return ""
+
+    # Return the recognized query
+    return query
 #######################################
 '''
 "Darwin" in this context refers to the Darwin operating system kernel, which is the open-source Unix-like operating system core that underlies macOS. Apple's macOS is built on top of the Darwin operating system.
 '''
+
 
 # ########################################################
 # Function to greeting the user based on the time bases   
@@ -94,36 +105,32 @@ def greet_user():
         speak("Good afternoon, sir!")
     else:
         speak("Good evening, sir!")
-
 # call function
 greet_user()
 
-
-#######################END#################################
+########################################################
 # ROSE Intro
 speak("I'm Your Personal AI, My name is Rose")
 speak("Hello Boss! How can I assist you today....?")
-
-
 
 ##################################
 # Initialize app_name outside the loop
 app_name = ""
 
-# Initialize sleep mode state
-sleep_mode = False
+# # Initialize sleep mode state
+# sleep_mode = False
 
 # While loop for user interactions
 while True:
     query = command_from_user().lower()
-    print('\nYou said: ' + query)
+    print('\n You said: ' + query)
 
     if 'open' in query:
         app_name = query.replace('open', '')
         speak('opening ' + app_name)
         pyautogui.hotkey('command', 'space')
         pyautogui.typewrite(app_name)
-        pyautogui.sleep(0.5)
+        pyautogui.sleep(0.2)
         pyautogui.press('enter')
 
 # Check if the query contains the word 'switch tab'
@@ -183,9 +190,9 @@ while True:
         speak(f"Searching the web for {search_query}")
         pywhatkit.search(search_query)
 
-    elif 'sleep' in query:
-        speak('As your command sir,' +'I''m going to sleep but you can call me anytime just you have to say wake up and I will be there for you')
-        sleep_mode = True
+    # elif 'sleep' in query:
+    #     speak('As your command sir,' +'I''m going to sleep but you can call me anytime just you have to say wake up and I will be there for you')
+    #     sleep_mode = True
 
     else:
         speak("I'm not sure how to handle that, sir")
