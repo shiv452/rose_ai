@@ -61,12 +61,12 @@ def command_from_user():
 
     with srp.Microphone() as source:
         speak("I'm listening. please speak!")
-        rec.pause_threshold = 0.2
+        rec.pause_threshold = 0.5 #if pause if more than .5sec it assume speech is finish and start searching 
 
         try:
             audio = rec.listen(source)
             print("Analyzing the voice...!")
-            query_general_general = rec.recognize_google(audio, language='en-us')
+            query_general = rec.recognize_google(audio, language='en-us')
 
         except srp.UnknownValueError:
             # Handle the case where speech recognition could not understand the audio
@@ -116,9 +116,8 @@ speak("Hye Shivam, How can i assist you today....?")
 ##################################
 # Initialize app_name outside the loop
 app_name = ""
-
-# # Initialize sleep mode state
-# sleep_mode = False
+# Initialize variables YouTube query
+query_youtube_skip=""
 
 # While loop for user interactions
 # While loop for user interactions
@@ -130,7 +129,7 @@ while True:
     #if query_general:
     # Get YouTube-specific user input
     # Get YouTube-specific user input only if the general query is not empty
-    query_youtube_skip = Youtube_skip.command_from_user()
+        #query_youtube_skip = Youtube_skip.command_from_user()
 
     # Print the recognized queries for debugging
     print('\nYou said (General):', query_general)
@@ -171,10 +170,12 @@ while True:
         time.sleep(0.5)
         speak('tab is closed sir')
         
-    elif 'close' in query_general:
-        pyautogui.hotkey('command','q')
+    elif f'close the {app_name}' in query_general:
+        with pyautogui.hold('command'):
+            time.sleep(4)
+            pyautogui.press('q')
         time.sleep(4)
-        speak(app_name + ' is closed, sir')
+        speak(f'{app_name} is closed, sir')
         
     # Check if the query_general contains the word 'Play' and play the song
     elif 'play' in query_general:

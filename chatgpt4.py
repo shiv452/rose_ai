@@ -1,6 +1,6 @@
 import g4f
-from collections.abc import MutableMapping
-
+import re
+from g4f.gui import *
 
 # Sample messages for testing
 messages = [
@@ -40,7 +40,7 @@ def gpt_process(*args):
     )
 
     # Initialize an empty string to store the response
-    generated_response = " "
+    generated_response = ""
 
     # Iterate over the response and print each part
     for part in response:
@@ -54,3 +54,4 @@ def gpt_process(*args):
 
 # Example usage
 result = gpt_process('Who are you?')
+

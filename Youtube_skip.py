@@ -68,7 +68,9 @@ def click_skip_ad_button():
         Exception: If an error occurs during the button click.
     """
     try:
-        pyautogui.click(pyautogui.locateCenterOnScreen('skip_button.png'))
+        skip_path = '//*[@id="ad-text:7"]'                                      #'//*[@id="skip-button:1n"]/span/button' #XPath for skip btn
+        pyautogui.click(pyautogui.locateCenterOnScreen('skip_path'))  
+        #click perfom here
     except Exception as e:
         print("Error clicking the skip ad button:", e)
 
@@ -85,7 +87,7 @@ def play_youtube_video(song_name):
     try:
         speak('As your command, sir. Playing ' + song_name + ' for you.')
         pywhatkit.playonyt(song_name)
-        time.sleep(5)
+        time.sleep(10)
         click_skip_ad_button()
 
     except Exception as e:
