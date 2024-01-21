@@ -85,7 +85,7 @@ def play_youtube_video(song_name):
     try:
         speak('As your command, sir. Playing ' + song_name + ' for you.')
         pywhatkit.playonyt(song_name)
-        time.sleep(15)
+        time.sleep(5)
         click_skip_ad_button()
 
     except Exception as e:

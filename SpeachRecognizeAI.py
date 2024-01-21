@@ -60,8 +60,8 @@ def command_from_user():
     rec = srp.Recognizer()
 
     with srp.Microphone() as source:
-        speak("I'm listening. Please speak.")
-        rec.pause_threshold = 0.5
+        speak("I'm listening. please speak!")
+        rec.pause_threshold = 0.2
 
         try:
             audio = rec.listen(source)
@@ -84,7 +84,7 @@ def command_from_user():
             return ""
 
     # Return the recognized query_general
-    return query_general_general
+    return query_general
 #######################################
 '''
 "Darwin" in this context refers to the Darwin operating system kernel, which is the open-source Unix-like operating system core that underlies macOS. Apple's macOS is built on top of the Darwin operating system.
@@ -111,7 +111,7 @@ greet_user()
 ########################################################
 # ROSE Intro
 speak("I'm Your Personal AI, My name is Rose")
-speak("Hello Boss! How can I assist you today....?")
+speak("Hye Shivam, How can i assist you today....?")
 
 ##################################
 # Initialize app_name outside the loop
@@ -126,12 +126,15 @@ while True:
     # Get general user input
     query_general = command_from_user().lower()
 
+    # Check if the general query is not empty
+    #if query_general:
     # Get YouTube-specific user input
+    # Get YouTube-specific user input only if the general query is not empty
     query_youtube_skip = Youtube_skip.command_from_user()
 
     # Print the recognized queries for debugging
     print('\nYou said (General):', query_general)
-    print('You said (YouTube skip):', query_youtube_skip)
+    print('\nYou said (YouTube skip):', query_youtube_skip)
 
     if 'open' in query_general:
         app_name = query_general.replace('open', '')
@@ -142,7 +145,7 @@ while True:
         pyautogui.sleep(0.2)
         pyautogui.press('enter')
 
-# Check if the query_general contains the word 'switch tab'
+    # Check if the query_general contains the word 'switch tab'
     elif 'switch right' in query_general:
         #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
         #pyautogui.hotkey('alt','tab') #this line is for Win user
@@ -173,7 +176,7 @@ while True:
         time.sleep(4)
         speak(app_name + ' is closed, sir')
         
-# Check if the query_general contains the word 'Play' and play the song
+    # Check if the query_general contains the word 'Play' and play the song
     elif 'play' in query_general:
         song_name = query_general.replace('play', '')
         Youtube_skip.play_youtube_video(song_name)
@@ -186,14 +189,14 @@ while True:
         # speak('As your command, sir. Playing ' + song_name + ' for you.')
         # pywhatkit.playonyt(song_name)
         
-# Check if the query_general contains the word 'time'
+    # Check if the query_general contains the word 'time'
     elif 'time' in query_general:
         current_time = datetime.now().strftime('%I:%M %p')#Get the current time and format it as hh:mm AM/PM
         '''
-%H: Represents the hour in 24-hour format (00 to 23).
-%I: Represents the hour in 12-hour format (01 to 12).
-%M: Represents the minute (00 to 59).
-%p: Represents either AM or PM, depending on the time.
+    %H: Represents the hour in 24-hour format (00 to 23).
+    %I: Represents the hour in 12-hour format (01 to 12).
+    %M: Represents the minute (00 to 59).
+    %p: Represents either AM or PM, depending on the time.
         '''
         speak('current time is '+ current_time)
         
@@ -211,18 +214,19 @@ while True:
     #     speak('As your command sir,' +'I''m going to sleep but you can call me anytime just you have to say wake up and I will be there for you')
     #     sleep_mode = True
     # Stop and exit from the current window
-    elif any(keyword in query_general for keyword in ['stop', 'exit', 'quit']):
+        
+    elif any(keyword in query_general for keyword in ['stop', 'exit', 'quit', 'bye rose']):
         speak('Thank you for using rose ai, have a great day, sir!')
         speak('If you need assistance in the future, feel free to call upon me. Goodbye!')
         break
-    
+
     else:
         speak("I'm not sure how to handle that, sir")
 
-'''
-Below step is used to stop the infinite while loop for stop
-'''
-# Cleanup code if needed
-# Stop and quit the pygame.mixer
+    '''
+    Below step is used to stop the infinite while loop for stop
+    '''
+    # Cleanup code if needed
+    # Stop and quit the pygame.mixer
 pygame.mixer.music.stop()
 pygame.mixer.quit()   
