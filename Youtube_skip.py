@@ -68,8 +68,8 @@ def click_skip_ad_button():
         Exception: If an error occurs during the button click.
     """
     try:
-        skip_path = '//*[@id="ad-text:7"]'                                      #'//*[@id="skip-button:1n"]/span/button' #XPath for skip btn
-        pyautogui.click(pyautogui.locateCenterOnScreen('skip_path'))  
+        skip_path = '//*[@id="ad-text:7"]'                                     #'//*[@id="skip-button:1n"]/span/button' #XPath for skip btn
+        pyautogui.click(pyautogui.locateCenterOnScreen(skip_path))  
         #click perfom here
     except Exception as e:
         print("Error clicking the skip ad button:", e)

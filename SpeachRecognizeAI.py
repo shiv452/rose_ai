@@ -8,6 +8,10 @@ import pywhatkit
 from datetime import datetime
 import time
 import Youtube_skip
+import wikipedia
+# import wikipediaapi
+import subprocess
+import requests
 
 #########################
 '''
@@ -113,6 +117,39 @@ greet_user()
 speak("I'm Your Personal AI, My name is Rose")
 speak("Hye Shivam, How can i assist you today....?")
 
+def switch_window():
+    # Press Command (⌘) + Tab to switch between applications
+    pyautogui.hotkey('command', 'tab')
+    time.sleep(1)  # Add a delay to ensure the switch is registered
+
+def get_switch_count():
+    recognizer = srp.Recognizer()
+
+    with srp.Microphone() as source:
+        print("Please say the number of times to switch windows:")
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source, timeout=5)
+
+    try:
+        switch_count = int(recognizer.recognize_google(audio))
+        return switch_count
+    except (srp.UnknownValueError, srp.RequestError, ValueError):
+        print("Error recognizing speech or invalid input. Using default: 3")
+        return 3
+
+def news():
+    news_api = 'https://newsapi.org/v2/top-headlines?country=us&apiKey=b1cd548d0ee540f89978bee09b0bba8a'
+    
+    main_page = requests.get(news_api).json()
+    article = main_page["articles"]
+    heading=[]
+    day=["first","second","third","fourth",'fifth',"sixth","seventh","eighth","ninth","tenth"]
+
+    for ar in article:
+        heading.append(ar["title"])
+    for i in range(len(day)):
+        speak(f"today's {day[i]} news is: {heading[i]}")
+    
 ##################################
 # Initialize app_name outside the loop
 app_name = ""
@@ -145,7 +182,7 @@ while True:
         pyautogui.press('enter')
 
     # Check if the query_general contains the word 'switch tab'
-    elif 'switch right' in query_general:
+    elif 'switch right tab' in query_general:
         #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
         #pyautogui.hotkey('alt','tab') #this line is for Win user
         #switchTab()
@@ -153,7 +190,7 @@ while True:
         time.sleep(2)
         speak('tab is switch sir')
         
-    elif 'switch left' in query_general:
+    elif 'switch left tab' in query_general:
         #pyautogui.hotkey('command','tab') #this line of code switch tab for mac
         #pyautogui.hotkey('alt','tab') #this line is for Win user
         #switchTab()
@@ -161,7 +198,7 @@ while True:
         time.sleep(2)
         speak('tab is switch sir')
         
-    elif 'close tab' in query_general:
+    elif 'close the tab' in query_general:
         #pyautogui.hotkey('command','w') #this line is to close the tab fro mac
         #pyautogui.hotkey('alt','w') #this line is for win user
         #closeTab()
@@ -170,11 +207,19 @@ while True:
         time.sleep(0.5)
         speak('tab is closed sir')
         
+    elif 'switch the window' in query_general:
+        # pyautogui.hot("command")
+        # time.sleep(1)
+        switch_count = get_switch_count()
+
+        for _ in range(switch_window):
+            switch_window
+        
     elif f'close the {app_name}' in query_general:
         with pyautogui.hold('command'):
-            time.sleep(4)
-            pyautogui.press('q')
-        time.sleep(4)
+            time.sleep(5)
+            pyautogui.hold('q')
+            time.sleep(3)
         speak(f'{app_name} is closed, sir')
         
     # Check if the query_general contains the word 'Play' and play the song
@@ -211,18 +256,37 @@ while True:
         # speak(f"Searching the web for {search_query_general}")
         # pywhatkit.search(search_query_general)
 
-    # elif 'sleep' in query_general:
-    #     speak('As your command sir,' +'I''m going to sleep but you can call me anytime just you have to say wake up and I will be there for you')
-    #     sleep_mode = True
-    # Stop and exit from the current window
+    elif 'wikipedia' in query_general:
+        speak('searching on wikipedia.....!')
+        query_general = query_general.replace("wikipedia","")
+        result=wikipedia.summary(query_general, sentence=2)
+        speak("according to wikipedia")
+        speak(result)
         
-    elif any(keyword in query_general for keyword in ['stop', 'exit', 'quit', 'bye rose']):
+    elif 'tell me the today news' in query_general:
+        speak("Okay sir!, gathering the latest news")
+        news()
+        
+    elif "shutdown the system" in query_general:
+        speak("Shutting down...")
+        subprocess.run(["sudo", "shutdown", "-h", "now"])
+        
+    elif "sleep the system" in query_general:
+        speak("Putting the computer to sleep...")
+        subprocess.run(["sudo", "pmset", "sleepnow"])
+        
+    elif "restart the system" in query_general:
+        speak("Restarting...")
+        subprocess.run(["sudo", "shutdown", "-r", "now"])
+        
+    elif any(keyword in query_general for keyword in ['stop', 'exit', 'quit', 'goodnight rose','by rose']):
         speak('Thank you for using rose ai, have a great day, sir!')
         speak('If you need assistance in the future, feel free to call upon me. Goodbye!')
         break
 
     else:
-        speak("I'm not sure how to handle that, sir")
+        pass
+        # speak("I'm not sure how to handle that, sir")
 
     '''
     Below step is used to stop the infinite while loop for stop
