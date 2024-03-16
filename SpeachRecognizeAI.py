@@ -9,15 +9,20 @@ from datetime import datetime
 import time
 import Youtube_skip
 import wikipedia
-# import wikipediaapi
+import wikipediaapi
 import subprocess
 import requests
-
+from openai import *
+import pyfiglet
 #########################
 '''
 Below code is used to enable the AI voice
 '''
 #########################
+#Rose name display in ASCII format
+styled_text=pyfiglet.figlet_format('R O S E 🌹',font= '3-d')
+print(styled_text)
+
 def speak(text):
 
     # Rose voice
@@ -115,7 +120,7 @@ greet_user()
 ########################################################
 # ROSE Intro
 speak("I'm Your Personal AI, My name is Rose")
-speak("Hye Shivam, How can i assist you today....?")
+speak("Hye Master, How can i assist you today....?")
 
 def switch_window():
     # Press Command (⌘) + Tab to switch between applications
@@ -124,18 +129,19 @@ def switch_window():
 
 def get_switch_count():
     recognizer = srp.Recognizer()
+    switch_count = 1 #default value
 
     with srp.Microphone() as source:
-        print("Please say the number of times to switch windows:")
-        recognizer.adjust_for_ambient_noise(source)
-        audio = recognizer.listen(source, timeout=5)
+        print("Please say the number of times to switch windows. If you don't say anything, the default value is 3.")
+        try:
+            audio = recognizer.listen(source, timeout=5)
+            switch_count = int(recognizer.recognize_google(audio))
+            print(f"Recognized number: {switch_count}")
+        except (srp.UnknownValueError, srp.RequestError, ValueError) as e:
+            print(f"Error recognizing speech: {e}")
+            print("Using default value.")
 
-    try:
-        switch_count = int(recognizer.recognize_google(audio))
-        return switch_count
-    except (srp.UnknownValueError, srp.RequestError, ValueError):
-        print("Error recognizing speech or invalid input. Using default: 3")
-        return 3
+    return switch_count
 
 def news():
     news_api = 'https://newsapi.org/v2/top-headlines?country=us&apiKey=b1cd548d0ee540f89978bee09b0bba8a'
@@ -263,7 +269,7 @@ while True:
         speak("according to wikipedia")
         speak(result)
         
-    elif 'tell me the today news' in query_general:
+    elif 'whats today news' in query_general:
         speak("Okay sir!, gathering the latest news")
         news()
         
@@ -273,7 +279,7 @@ while True:
         
     elif "sleep the system" in query_general:
         speak("Putting the computer to sleep...")
-        subprocess.run(["sudo", "pmset", "sleepnow"])
+        subprocess.run(["sudo", "sleepnow"])
         
     elif "restart the system" in query_general:
         speak("Restarting...")

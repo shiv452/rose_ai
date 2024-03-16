@@ -1,0 +1,89 @@
+import requests
+import pygame
+import threading
+import speech_recognition as sr
+
+def fetch_news(language_code, country_code):
+    url = "https://newsapi.org/v2/top-headlines"
+    api_key = "YOUR_NEWSAPI_KEY"  # Replace with your actual NewsAPI key
+
+    params = {
+        "country": country_code,
+        "language": language_code,
+        "apiKey": api_key
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json()
+    
+    return data
+
+def speak(text, language_code):
+    tts = gTTS(text=text, lang=language_code, slow=False)
+    tts.save("news.mp3")
+    pygame.mixer.init()
+    pygame.mixer.music.load("news.mp3")
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+
+def command_from_user():
+    recognizer = sr.Recognizer()
+    microphone = sr.Microphone()
+
+    with microphone as source:
+        recognizer.adjust_for_ambient_noise(source)
+        print("Listening for a command...")
+        audio = recognizer.listen(source)
+
+    try:
+        command = recognizer.recognize_google(audio).lower()
+        print("Command:", command)
+        return command
+    except sr.UnknownValueError:
+        print("Could not understand audio.")
+        return ""
+    except sr.RequestError as e:
+        print(f"Could not request results: {e}")
+        return ""
+
+def main():
+    language_mapping = {
+        "english": "en",
+        "hindi": "hi",
+        "spanish": "es",
+        "french": "fr",
+        "german": "de",
+        "italian": "it",
+        "danish": "da",
+        # Add more languages as needed
+    }
+
+    while True:
+        user_input = command_from_user()
+        user_language = None
+        for lang in language_mapping:
+            if lang in user_input:
+                user_language = lang
+                break
+
+        if user_language:
+            language_code = language_mapping[user_language]
+            break
+        else:
+            print("Sorry, please specify a supported language to get the news.")
+
+    country_code = ""  # Adjust country code as needed
+    
+    news_data = fetch_news(language_code, country_code)
+    articles = news_data['articles']
+    
+    for i, article in enumerate(articles[:5]):
+        speak(f"Today's {i+1} news is: {article['title']}", language_code)
+        response = command_from_user().lower()
+        if 'stop' in response:
+            print("Alright, stopping the news.")
+            break
+
+if __name__ == "__main__":
+    main()
